@@ -1,0 +1,31 @@
+name: frontend
+
+services:
+    # Сервис "балансировщика", reverse proxy
+    web-server:
+        image: nginx
+        env_file:
+            - .env
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf # инициализация конфигурации сервера
+        ports:
+            - '80:80' # Проброс портов
+        networks:
+            - virtnet
+
+    # Сервис иетерфейса
+    frontend:
+        build: .
+        env_file:
+            - .env
+        ports:
+            - '3000:3000' # Проброс портов
+        volumes:
+            - ./src:/var/www/frontend/src
+        networks:
+            virtnet:
+                ipv4_address: 172.28.5.8
+
+networks:
+    virtnet:
+        external: true
