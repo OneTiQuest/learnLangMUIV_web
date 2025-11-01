@@ -1,14 +1,11 @@
-import { Outlet } from 'react-router'
+import { Outlet } from 'react-router';
 
 function Auth() {
     return (
-        <div>
-            <div>Auth</div>
-            <div>
-                <Outlet />
-            </div>
+        <div className="flex justify-center items-center h-screen bg-gray-200 px-6">
+            <Outlet />
         </div>
-    )
+    );
 }
 
-export default Auth
+export default Auth;
