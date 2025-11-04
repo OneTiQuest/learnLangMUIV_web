@@ -1,4 +1,4 @@
-import muivLogo from '../../assets/muiv.jpg';
+import muivLogo from '../../assets/muiv.png';
 import { useFetcher } from "react-router";
 import { NavLink } from "react-router";
 
@@ -31,10 +31,10 @@ function Login() {
 
                 <div className="flex justify-between items-center mt-8">
                     <div>
-                        <label className="inline-flex items-center cursor-pointer">
-                            <input type="checkbox" className="form-checkbox text-indigo-600" />
+                        {/* <label className="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" className="form-checkbox text-muiv" />
                             <span className="mx-2 text-gray-600 text-sm">Запомнить меня</span>
-                        </label>
+                        </label> */}
                     </div>
 
                     <div>

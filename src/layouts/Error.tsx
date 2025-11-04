@@ -3,7 +3,7 @@ function Error() {
         <div>
             <div>Error 404</div>
         </div>
-    )
+    );
 }
 
-export default Error
+export default Error;

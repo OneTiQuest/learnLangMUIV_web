@@ -1,18 +1,14 @@
-import muivLogo from '../../assets/muiv.png';
 import { useFetcher } from "react-router";
 
-function Register() {
+function Edit() {
     const fetcher = useFetcher();
 
     return (
-        <div className="flex flex-col p-6 relative max-w-sm w-full bg-white shadow-md rounded-md">
-            <div className="flex justify-center items-center cursor-default">
-                <img className="h-10 w-10" src={muivLogo} />
-                <span className="text-gray-700 ml-2 font-semibold text-2xl">Регистрация</span>
-            </div>
+        <div>
+            <h3 className="text-muiv text-3xl font-medium">Редактирование темы</h3>
 
             {fetcher?.data?.error && (
-                <div className='flex justify-center absolute bg-red-300 border-2 p-4 border-red-400 rounded-md -translate-x-70'>
+                <div className='flex justify-center absolute bg-red-300 border-2 p-4 border-red-400 rounded-md translate-x-120'>
                     {fetcher.data.error_text}
                 </div>
             )}
@@ -45,7 +41,7 @@ function Register() {
 
                 <div className="mt-6">
                     <button type='submit' className="py-2 px-4 cursor-pointer text-center bg-muiv rounded-md w-full text-white text-sm">
-                        Зарегистрироваться
+                        Сохранить
                     </button>
                 </div>
             </fetcher.Form>
@@ -53,4 +49,4 @@ function Register() {
     );
 }
 
-export default Register;
+export default Edit;

@@ -41,9 +41,6 @@ export default class Api {
         ...config.headers
       }
     });
-    return {
-      ok: result.ok,
-      ...(await result.json())
-    }
+    return result.json();
   }
 }
