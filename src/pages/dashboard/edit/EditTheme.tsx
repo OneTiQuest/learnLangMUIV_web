@@ -1,8 +1,10 @@
 import { useFetcher } from "react-router";
+import { useLoaderData } from "react-router";
 
 function Edit() {
     const fetcher = useFetcher();
-
+    const { theme, modules } = useLoaderData();
+    
     return (
         <div>
             <h3 className="text-muiv text-3xl font-medium">Редактирование темы</h3>
@@ -14,33 +16,25 @@ function Edit() {
             )}
 
             <fetcher.Form className="mt-4" method="post">
-                <label className="block">
-                    <span className="text-gray-700 text-sm">Логин</span>
-                    <input type="text" name="login" className="form-input block w-full p-2 mt-2 rounded-md outline-offset-2 outline-2 outline-muiv focus:outline-dashed" />
+                <label className="block w-96">
+                    <span className="text-gray-700 text-sm">Название</span>
+                    <input type="text" name="name" defaultValue={theme && theme[1]} className="block w-full p-2 mt-2 rounded-md outline-offset-2 outline-2 outline-muiv focus:outline-dashed" />
                 </label>
 
-                <label className="block mt-6">
-                    <span className="text-gray-700 text-sm">Пароль</span>
-                    <input type="password" name="password" className="form-input block w-full p-2 mt-2 rounded-md outline-offset-2 outline-2 outline-muiv focus:outline-dashed" />
-                </label>
+                <h2 className="text-muiv text-2xl mt-6 mb-4 font-medium">Модуль</h2>
 
-                <label className="block mt-6">
-                    <span className="text-gray-700 text-sm">Повторите пароль</span>
-                    <input type="password" name="repeat_password" className="form-input block w-full p-2 mt-2 rounded-md outline-offset-2 outline-2 outline-muiv focus:outline-dashed" />
-                </label>
-
-                <label className="block mt-6">
-                    <span className="text-gray-700 text-sm">Имя</span>
-                    <input type="text" name="first_name" className="form-input block w-full p-2 mt-2 rounded-md outline-offset-2 outline-2 outline-muiv focus:outline-dashed" />
-                </label>
-
-                <label className="block mt-6">
-                    <span className="text-gray-700 text-sm">Фамилия</span>
-                    <input type="text" name="last_name" className="form-input block w-full p-2 mt-2 rounded-md outline-offset-2 outline-2 outline-muiv focus:outline-dashed" />
-                </label>
+                <select name="module" defaultValue={theme && theme[3]} className="block w-96 p-2 mt-2 rounded-md outline-offset-2 outline-2 outline-muiv focus:outline-dashed">
+                    {modules.map((module) => {
+                        return (
+                            <option key={module[0]} value={module[0]}>
+                                {module[1]}
+                            </option>
+                        );
+                    })}
+                </select>
 
                 <div className="mt-6">
-                    <button type='submit' className="py-2 px-4 cursor-pointer text-center bg-muiv rounded-md w-full text-white text-sm">
+                    <button type='submit' className="py-2 w-96 px-4 cursor-pointer text-center bg-muiv rounded-md text-white text-sm">
                         Сохранить
                     </button>
                 </div>

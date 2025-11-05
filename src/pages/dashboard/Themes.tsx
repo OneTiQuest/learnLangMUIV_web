@@ -2,11 +2,18 @@ import { useLoaderData } from "react-router";
 import { NavLink } from "react-router";
 
 function Themes() {
-    const { themes } = useLoaderData();
-    
+    const { themes, userData } = useLoaderData();
+
     return (
         <div>
             <h3 className="text-muiv text-3xl font-medium">Темы</h3>
+
+            {!userData.isStudent && (
+                <NavLink to={'/dashboard/themes/create'} className="flex bg-muiv justify-center align-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
+                    <span className="text-white text-2xl">Добавить</span>
+                    <span className="text-white text-3xl ml-2">+</span>
+                </NavLink>
+            )}
 
             <div className="mt-8">
                 <div className="flex flex-col mt-6">
@@ -16,7 +23,9 @@ function Themes() {
                                 <thead>
                                     <tr>
                                         <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Имя</th>
-                                        <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Действия</th>
+                                        {!userData.isStudent && (
+                                            <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Действия</th>
+                                        )}
                                     </tr>
                                 </thead>
 
@@ -28,13 +37,14 @@ function Themes() {
                                                     {theme[1][1]}
                                                 </NavLink>
                                             </td>
-                                            
 
-                                            < td className="px-6 py-4 whitespace-no-wrap text-left border-b border-gray-200 text-sm leading-5 font-medium" >
-                                                <NavLink to={`/dashboard/themes/${theme[1][0]}/edit`} className="text-muiv hover:text-indigo-900">
-                                                    Редактировать
-                                                </NavLink>
-                                            </td>
+                                            {!userData.isStudent && (
+                                                <td className="px-6 py-4 whitespace-no-wrap text-left border-b border-gray-200 text-sm leading-5 font-medium" >
+                                                    <NavLink to={`/dashboard/themes/${theme[1][0]}/edit`} className="text-muiv hover:text-indigo-900">
+                                                        Редактировать
+                                                    </NavLink>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>

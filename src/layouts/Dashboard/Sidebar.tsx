@@ -52,13 +52,11 @@ function Sidebar({ isOpen = false, onToggle }) {
             <div className={`fixed inset-0 z-20 transition-opacity bg-black opacity-50 lg:hidden ${isOpen ? 'block' : 'hidden'}`} onClick={onToggle}></div>
 
             <div className={`fixed inset-y-0 left-0 z-30 w-64 overflow-y-auto transition duration-300 transform bg-stone-300 lg:translate-x-0 lg:static lg:inset-0 ${isOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'}`}>
-                <div className="flex items-center justify-center mt-8">
-                    <div className="flex items-center">
+                <NavLink to={'/dashboard'} className="flex items-center justify-center mt-8">
                         <img className="w-12 h-12" src={muivLogo} />
 
                         <span className="mx-2 text-2xl font-semibold text-muiv">Кабинет</span>
-                    </div>
-                </div>
+                </NavLink>
 
                 <nav className="mt-10">
                     <NavLink to={'/dashboard/modules'} className="flex items-center px-6 py-2 mt-4 text-muiv transition duration-300 hover:bg-muiv hover:bg-opacity-25 hover:text-white">

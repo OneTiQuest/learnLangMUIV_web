@@ -33,7 +33,7 @@ function Header({ onToggle }) {
 
             <div className="flex items-center">
                 <div className="relative">
-                    <button onClick={() => setUserToggle((prevSate) => !prevSate)} className="block bg-muiv w-8 h-8 overflow-hidden cursor-pointer rounded-full shadow focus:outline-none">
+                    <button onClick={() => setUserToggle((prevSate) => !prevSate)} className="block bg-muiv w-8 h-8 p-2 overflow-hidden cursor-pointer rounded-full shadow focus:outline-none">
                         <img className="object-cover invert w-full h-full" src={userLogo} />
                     </button>
 

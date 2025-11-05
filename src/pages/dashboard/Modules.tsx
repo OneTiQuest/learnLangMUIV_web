@@ -1,13 +1,24 @@
+import { useCallback } from "react";
 import { useLoaderData } from "react-router";
 import { NavLink } from "react-router";
+import { useSubmit } from "react-router";
 
 function Modules() {
-    const { modules } = useLoaderData();
-    console.log( modules);
-    
+    const { modules, userData } = useLoaderData();
+    const submit = useSubmit();
+
+    const deleteHandler = useCallback((moduleId) => submit({ deleteModule: moduleId }, {method: 'post'}), [submit]);
+
     return (
         <div>
             <h3 className="text-muiv text-3xl font-medium">Модули</h3>
+
+            {userData.isAdmin && (
+                <NavLink to={'/dashboard/modules/create'} className="flex bg-muiv justify-center align-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
+                    <span className="text-white text-2xl">Добавить</span>
+                    <span className="text-white text-3xl ml-2">+</span>
+                </NavLink>
+            )}
 
             <div className="mt-8">
                 <div className="flex flex-col mt-6">
@@ -18,7 +29,9 @@ function Modules() {
                                     <tr>
                                         <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Имя</th>
                                         <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Язык</th>
-                                        <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Действия</th>
+                                        {userData.isAdmin && (
+                                            <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Действия</th>
+                                        )}
                                     </tr>
                                 </thead>
 
@@ -54,12 +67,16 @@ function Modules() {
                                         </td>
 
                                         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">Owner</td> */}
-
-                                            < td className="px-6 py-4 whitespace-no-wrap text-left border-b border-gray-200 text-sm leading-5 font-medium" >
-                                                <NavLink to={`/dashboard/modules/${module[1][0]}/edit`} className="text-muiv hover:text-indigo-900">
-                                                    Редактировать
-                                                </NavLink>
-                                            </td>
+                                            {userData.isAdmin && (
+                                                < td className="px-6 py-4 whitespace-no-wrap text-left border-b border-gray-200 text-sm leading-5 font-medium" >
+                                                    <NavLink to={`/dashboard/modules/${module[1][0]}/edit`} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 ml-6 cursor-pointer">
+                                                        Редактировать
+                                                    </NavLink>
+                                                    <span onClick={deleteHandler.bind(null, module[1][0])} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 ml-6 cursor-pointer">
+                                                        Удалить
+                                                    </span>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>

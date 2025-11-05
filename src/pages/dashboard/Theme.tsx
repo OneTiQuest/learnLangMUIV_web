@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useLoaderData } from "react-router";
 import Exercise from "./theme/Exercise";
 import Api from "../../ApiClient";
+import { NavLink } from "react-router";
 
 function calcResults(answers: [string, string][]) {
     const maxA = answers.length;
@@ -18,11 +19,10 @@ function calcResults(answers: [string, string][]) {
     return 5;
 }
 
-function Theme() {
-    const { exercises, uid, id, grade } = useLoaderData();
+function StudentTheme({ exercises, uid, id, grade }) {
     const [themeInWork, setThemeInWork] = useState(false);
     const [currentExercise, setCurrentExercise] = useState(0);
-    const [themeGrade, setThemeGrade] = useState(grade[0]);
+    const [themeGrade, setThemeGrade] = useState(grade && grade[0]);
 
 
     const startThemeHandler = useCallback(() => {
@@ -64,11 +64,9 @@ function Theme() {
         <div>
             <h3 className="text-muiv text-3xl font-medium">Упражнения</h3>
 
-            <div className="mt-8">
-
-                <div className="flex flex-col">
-                    <span>Количество упражнений в теме: {exercises.length}</span>
-
+            <div className="mt-8 flex flex-col">
+                <span>Количество упражнений в теме: {exercises.length}</span>
+                {themeGrade && (
                     <div className="inline-flex max-w-sm w-full bg-white shadow-md rounded-lg overflow-hidden mt-3">
                         {themeGrade > 3 ? (
                             <div className="flex justify-center items-center w-12 bg-green-500">
@@ -99,14 +97,67 @@ function Theme() {
                             </div>
                         </div>
                     </div>
+                )}
 
+                {!!exercises.length && (
                     <button onClick={startThemeHandler} className="mt-8 py-2 px-4 cursor-pointer text-center bg-muiv w-sm rounded-md text-white text-sm">
                         Изучить тему
                     </button>
-                </div>
-
+                )}
             </div>
 
+        </div>
+    );
+}
+
+function Theme() {
+    const { exercises, id, grade, userData } = useLoaderData();
+
+    if (userData.isStudent) {
+        return <StudentTheme exercises={exercises} uid={userData.uid} id={id} grade={grade} />;
+    }
+
+    return (
+        <div>
+            <h3 className="text-muiv text-3xl font-medium">Упражнения</h3>
+
+            <NavLink to={'/dashboard/exercises/create'} className="flex bg-muiv justify-center align-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
+                <span className="text-white text-2xl">Добавить</span>
+                <span className="text-white text-3xl ml-2">+</span>
+            </NavLink>
+
+            <div className="mt-8">
+                <div className="flex flex-col mt-6">
+                    <div className="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                        <div className="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
+                            <table className="min-w-full">
+                                <thead>
+                                    <tr>
+                                        <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Имя</th>
+                                        <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Действия</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody className="bg-white">
+                                    {exercises.map((exercise) => (
+                                        <tr key={exercise[0]}>
+                                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                <span className="text-sm flex leading-5 text-gray-900">{exercise[1]}</span>
+                                            </td>
+
+                                            <td className="px-6 py-4 whitespace-no-wrap text-left border-b border-gray-200 text-sm leading-5 font-medium" >
+                                                <NavLink to={`/dashboard/exercises/${exercise[0]}/edit`} className="text-muiv hover:text-indigo-900">
+                                                    Редактировать
+                                                </NavLink>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

@@ -44,13 +44,94 @@ const router = createBrowserRouter([
                         loader: async () => {
                             return { users: await Api.get('/users/') };
                         },
+                        action: async ({ request }) => {
+                            const userId = (await request.formData()).get("deleteUser");
+                            Api.delete(`/users/${userId}`);
+                        }
                     },
                     {
                         path: 'users/:userId/edit',
                         Component: EditUser,
                         loader: async ({ params }) => {
                             const userId = params.userId;
-                            return { users: await Api.get(`/users/${userId}`) };
+                            return {
+                                user: await Api.get(`/users/${userId}`),
+                                courses: await Api.get(`/courses/`),
+                                langs: await Api.get(`/langs/`),
+                                roles: await Api.get(`/roles/`),
+                            };
+                        },
+                        action: async ({ request, params }) => {
+                            const userId = params.userId;
+                            const formData = await request.formData();
+                            const login = formData.get('login');
+                            const password = formData.get('password');
+                            const first_name = formData.get('first_name');
+                            const last_name = formData.get('last_name');
+                            const role = Number(formData.get('role'));
+                            const courses = formData.getAll('courses').map(Number);
+                            const langs = formData.getAll('langs').map(Number);
+
+                            if (!login || !password || !first_name
+                                || !last_name || !role || !courses.length || !langs.length
+                            ) {
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните пустые поля'
+                                };
+                            }
+
+                            await Api.patch(`/users/${userId}`, {
+                                first_name,
+                                last_name,
+                                login,
+                                password,
+                                role_id: role,
+                            });
+                            await Api.put(`/users/${userId}/langs`, { langs });
+                            await Api.put(`/users/${userId}/courses`, { courses });
+                            return redirect('/dashboard/users');
+                        },
+                    },
+                    {
+                        path: 'users/create',
+                        Component: EditUser,
+                        loader: async () => {
+                            return {
+                                courses: await Api.get(`/courses/`),
+                                langs: await Api.get(`/langs/`),
+                                roles: await Api.get(`/roles/`),
+                            };
+                        },
+                        action: async ({ request }) => {
+                            const formData = await request.formData();
+                            const login = formData.get('login');
+                            const password = formData.get('password');
+                            const first_name = formData.get('first_name');
+                            const last_name = formData.get('last_name');
+                            const role = Number(formData.get('role'));
+                            const courses = formData.getAll('courses').map(Number);
+                            const langs = formData.getAll('langs').map(Number);
+
+                            if (!login || !password || !first_name
+                                || !last_name || !role || !courses.length || !langs.length
+                            ) {
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните пустые поля'
+                                };
+                            }
+
+                            const newUser = await Api.post('/users/', {
+                                first_name,
+                                last_name,
+                                login,
+                                password,
+                                role_id: role,
+                            });
+                            await Api.put(`/users/${newUser[0]}/langs`, { langs });
+                            await Api.put(`/users/${newUser[0]}/courses`, { courses });
+                            return redirect('/dashboard/users');
                         },
                     },
                     {
@@ -64,18 +145,26 @@ const router = createBrowserRouter([
                         path: 'modules',
                         Component: Modules,
                         loader: async ({ context }) => {
-                            console.log(context);
-
                             const uid = context.get(userContext)?.uid;
-                            return { modules: await Api.get(`/users/${uid}/modules`) };
+                            return {
+                                modules: await Api.get(`/users/${uid}/modules`),
+                                userData: context.get(userContext)
+                            };
                         },
+                        action: async ({ request }) => {
+                            const moduleId = (await request.formData()).get("deleteModule");
+                            Api.delete(`/modules/${moduleId}`);
+                        }
                     },
                     {
                         path: 'modules/:moduleId',
                         Component: Themes,
-                        loader: async ({ params }) => {
+                        loader: async ({ params, context }) => {
                             const moduleId = params.moduleId;
-                            return { themes: await Api.get(`/modules/${moduleId}/themes`) };
+                            return { 
+                                themes: await Api.get(`/modules/${moduleId}/themes`),
+                                userData: context.get(userContext)
+                            };
                         }
                     },
                     {
@@ -83,8 +172,57 @@ const router = createBrowserRouter([
                         Component: EditModule,
                         loader: async ({ params }) => {
                             const moduleId = params.moduleId;
-                            return { module: await Api.get(`/modules/${moduleId}`) };
-                        }
+                            return {
+                                module: await Api.get(`/modules/${moduleId}`),
+                                courses: await Api.get(`/courses/`),
+                                langs: await Api.get(`/langs/`),
+                            };
+                        },
+                        action: async ({ request, params }) => {
+                            const moduleId = params.moduleId;
+                            const formData = await request.formData();
+                            const name = formData.get('name');
+                            const lang = formData.get('lang');
+                            const courses = formData.getAll('courses').map(Number);
+
+                            if (!name || !lang || !courses.length) {
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните пустые поля'
+                                };
+                            }
+
+                            await Api.patch(`/modules/${moduleId}`, { name, lang_id: lang });
+                            await Api.put(`/modules/${moduleId}/courses`, { courses });
+                            return redirect('/dashboard/modules');
+                        },
+                    },
+                    {
+                        path: 'modules/create',
+                        Component: EditModule,
+                        loader: async () => {
+                            return {
+                                courses: await Api.get(`/courses/`),
+                                langs: await Api.get(`/langs/`),
+                            };
+                        },
+                        action: async ({ request }) => {
+                            const formData = await request.formData();
+                            const name = formData.get('name');
+                            const lang = formData.get('lang');
+                            const courses = formData.getAll('courses').map(Number);
+
+                            if (!name || !lang || !courses.length) {
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните пустые поля'
+                                };
+                            }
+
+                            const [newModule] = await Api.post(`/modules/`, { name, lang_id: lang });
+                            await Api.put(`/modules/${newModule}/courses`, { courses });
+                            return redirect('/dashboard/modules');
+                        },
                     },
                     {
                         path: 'themes/:themeId',
@@ -94,7 +232,7 @@ const router = createBrowserRouter([
                             const uid = context.get(userContext)?.uid;
                             return {
                                 id: themeId,
-                                uid: uid,
+                                userData: context.get(userContext),
                                 exercises: await Api.get(`/themes/${themeId}/exercises`),
                                 grade: await Api.get(`/users/${uid}/themes/${themeId}/grades`)
                             };
@@ -103,12 +241,36 @@ const router = createBrowserRouter([
                     {
                         path: 'themes/:themeId/edit',
                         Component: EditTheme,
-                        loader: async ({ params }) => {
+                        loader: async ({ params, context }) => {
                             const themeId = params.themeId;
+                            const uid = context.get(userContext)?.uid;
                             return {
-                                theme: await Api.get(`/themes/${themeId}`)
+                                theme: await Api.get(`/themes/${themeId}`),
+                                modules: await Api.get(`/users/${uid}/modules`)
                             };
-                        }
+                        },
+                        action: async ({ request }) => {
+                            const formData = await request.formData();
+                            console.log(formData.get('name'));
+                            console.log(Number(formData.get('module')));
+
+                        },
+                    },
+                    {
+                        path: 'themes/create',
+                        Component: EditTheme,
+                        loader: async ({ context }) => {
+                            const uid = context.get(userContext)?.uid;
+                            return {
+                                modules: await Api.get(`/users/${uid}/modules`)
+                            };
+                        },
+                        action: async ({ request }) => {
+                            const formData = await request.formData();
+                            console.log(formData.get('name'));
+                            console.log(Number(formData.get('module')));
+
+                        },
                     },
                     {
                         path: 'exercises/:exerciseId/edit',
@@ -116,9 +278,31 @@ const router = createBrowserRouter([
                         loader: async ({ params }) => {
                             const exerciseId = params.exerciseId;
                             return {
-                                exercise: await Api.get(`/exercises/${exerciseId}`)
+                                exercise: await Api.get(`/exercises/${exerciseId}`),
+                                exercise_types: await Api.get(`/exercises/types`)
                             };
-                        }
+                        },
+                        action: async ({ request }) => {
+                            const formData = await request.formData();
+                            console.log(formData.get('name'));
+                            console.log(Number(formData.get('exercise_type')));
+
+                        },
+                    },
+                    {
+                        path: 'exercises/create',
+                        Component: EditExercise,
+                        loader: async () => {
+                            return {
+                                exercise_types: await Api.get(`/exercises/types`)
+                            };
+                        },
+                        action: async ({ request }) => {
+                            const formData = await request.formData();
+                            console.log(formData.get('name'));
+                            console.log(Number(formData.get('exercise_type')));
+
+                        },
                     },
                 ],
             },
