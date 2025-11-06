@@ -14,7 +14,7 @@ function Modules() {
             <h3 className="text-muiv text-3xl font-medium">Модули</h3>
 
             {userData.isAdmin && (
-                <NavLink to={'/dashboard/modules/create'} className="flex bg-muiv justify-center align-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
+                <NavLink to={'/dashboard/modules/create'} className="flex bg-muiv justify-center items-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
                     <span className="text-white text-2xl">Добавить</span>
                     <span className="text-white text-3xl ml-2">+</span>
                 </NavLink>

@@ -1,7 +1,5 @@
 import { useCallback } from "react";
-import { useLoaderData } from "react-router";
-import { NavLink } from "react-router";
-import { useSubmit } from "react-router";
+import { NavLink, useLoaderData, useSubmit } from "react-router";
 
 function Users() {
     const { users } = useLoaderData();
@@ -13,7 +11,7 @@ function Users() {
         <div>
             <h3 className="text-muiv text-3xl font-medium">Пользователи</h3>
 
-            <NavLink to={'/dashboard/users/create'} className="flex bg-muiv justify-center align-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
+            <NavLink to={'/dashboard/users/create'} className="flex bg-muiv justify-center items-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
                 <span className="text-white text-2xl">Добавить</span>
                 <span className="text-white text-3xl ml-2">+</span>
             </NavLink>

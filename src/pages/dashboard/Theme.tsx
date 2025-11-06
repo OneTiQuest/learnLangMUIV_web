@@ -1,8 +1,7 @@
 import { useCallback, useState } from "react";
-import { useLoaderData } from "react-router";
 import Exercise from "./theme/Exercise";
 import Api from "../../ApiClient";
-import { NavLink } from "react-router";
+import { NavLink, useLoaderData, useSubmit } from "react-router";
 
 function calcResults(answers: [string, string][]) {
     const maxA = answers.length;
@@ -112,6 +111,9 @@ function StudentTheme({ exercises, uid, id, grade }) {
 
 function Theme() {
     const { exercises, id, grade, userData } = useLoaderData();
+    const submit = useSubmit();
+
+    const deleteHandler = useCallback((exerciseId) => submit({ deleteExercise: exerciseId }, { method: 'post' }), [submit]);
 
     if (userData.isStudent) {
         return <StudentTheme exercises={exercises} uid={userData.uid} id={id} grade={grade} />;
@@ -121,7 +123,7 @@ function Theme() {
         <div>
             <h3 className="text-muiv text-3xl font-medium">Упражнения</h3>
 
-            <NavLink to={'/dashboard/exercises/create'} className="flex bg-muiv justify-center align-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
+            <NavLink to={`/dashboard/themes/${id}/exercises/create`} className="flex bg-muiv justify-center items-center cursor-pointer px-4 mt-8 w-40 rounded-4xl">
                 <span className="text-white text-2xl">Добавить</span>
                 <span className="text-white text-3xl ml-2">+</span>
             </NavLink>
@@ -146,9 +148,12 @@ function Theme() {
                                             </td>
 
                                             <td className="px-6 py-4 whitespace-no-wrap text-left border-b border-gray-200 text-sm leading-5 font-medium" >
-                                                <NavLink to={`/dashboard/exercises/${exercise[0]}/edit`} className="text-muiv hover:text-indigo-900">
+                                                <NavLink to={`/dashboard/themes/${id}/exercises/${exercise[0]}/edit`} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 ml-6 cursor-pointer">
                                                     Редактировать
                                                 </NavLink>
+                                                <span onClick={deleteHandler.bind(null, exercise[0])} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 ml-6 cursor-pointer">
+                                                    Удалить
+                                                </span>
                                             </td>
                                         </tr>
                                     ))}

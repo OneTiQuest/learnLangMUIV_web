@@ -153,7 +153,7 @@ const router = createBrowserRouter([
                         },
                         action: async ({ request }) => {
                             const moduleId = (await request.formData()).get("deleteModule");
-                            Api.delete(`/modules/${moduleId}`);
+                            await Api.delete(`/modules/${moduleId}`);
                         }
                     },
                     {
@@ -161,10 +161,14 @@ const router = createBrowserRouter([
                         Component: Themes,
                         loader: async ({ params, context }) => {
                             const moduleId = params.moduleId;
-                            return { 
+                            return {
                                 themes: await Api.get(`/modules/${moduleId}/themes`),
                                 userData: context.get(userContext)
                             };
+                        },
+                        action: async ({ request }) => {
+                            const themeId = (await request.formData()).get("deleteTheme");
+                            await Api.delete(`/themes/${themeId}`);
                         }
                     },
                     {
@@ -236,6 +240,10 @@ const router = createBrowserRouter([
                                 exercises: await Api.get(`/themes/${themeId}/exercises`),
                                 grade: await Api.get(`/users/${uid}/themes/${themeId}/grades`)
                             };
+                        },
+                        action: async ({ request }) => {
+                            const exerciseId = (await request.formData()).get("deleteExercise");
+                            await Api.delete(`/exercises/${exerciseId}`);
                         }
                     },
                     {
@@ -249,11 +257,13 @@ const router = createBrowserRouter([
                                 modules: await Api.get(`/users/${uid}/modules`)
                             };
                         },
-                        action: async ({ request }) => {
+                        action: async ({ request, params }) => {
+                            const themeId = params.themeId;
                             const formData = await request.formData();
-                            console.log(formData.get('name'));
-                            console.log(Number(formData.get('module')));
-
+                            const name = formData.get('name');
+                            const module_id = Number(formData.get('module'));
+                            const res = await Api.patch(`/themes/${themeId}`, { name, module_id });
+                            return redirect(`/dashboard/modules/${res[3]}`);
                         },
                     },
                     {
@@ -267,13 +277,14 @@ const router = createBrowserRouter([
                         },
                         action: async ({ request }) => {
                             const formData = await request.formData();
-                            console.log(formData.get('name'));
-                            console.log(Number(formData.get('module')));
-
+                            const name = formData.get('name');
+                            const module_id = Number(formData.get('module'));
+                            const res = await Api.post(`/modules/${module_id}/themes`, { name });
+                            return redirect(`/dashboard/modules/${res[3]}`);
                         },
                     },
                     {
-                        path: 'exercises/:exerciseId/edit',
+                        path: 'themes/:themeId/exercises/:exerciseId/edit',
                         Component: EditExercise,
                         loader: async ({ params }) => {
                             const exerciseId = params.exerciseId;
@@ -282,26 +293,141 @@ const router = createBrowserRouter([
                                 exercise_types: await Api.get(`/exercises/types`)
                             };
                         },
-                        action: async ({ request }) => {
+                        action: async ({ request, params }) => {
+                            const exerciseId = params.exerciseId;
+                            const themeId = params.themeId;
                             const formData = await request.formData();
-                            console.log(formData.get('name'));
-                            console.log(Number(formData.get('exercise_type')));
-
+                            const title = formData.get('name');
+                            const type_id = Number(formData.get('exercise_type'));
+                            if (!title || !type_id) {
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните пустые поля'
+                                };
+                            }
+                            let data = { title, type_id };
+                            switch (type_id) {
+                                case 1: {
+                                    const success_answer = formData.get('success_answer');
+                                    if (!success_answer) {
+                                        return {
+                                            error: true,
+                                            error_text: 'Заполните пустые поля'
+                                        };
+                                    }
+                                    data.success_answer = success_answer;
+                                    break;
+                                }
+                                case 2: {
+                                    const answers = formData.getAll('answers');
+                                    const success_answer = formData.get('success_answer');
+                                    if (!answers || !success_answer) {
+                                        return {
+                                            error: true,
+                                            error_text: 'Заполните пустые поля'
+                                        };
+                                    }
+                                    await Api.patch(`/exercises/${exerciseId}`, { answers });
+                                    data.success_answer = success_answer;
+                                    break;
+                                }
+                                case 3: {
+                                    const file = formData.get('file');
+                                    if (file && file.size > 0 && file instanceof File) {
+                                        data.fileName = await Api.send_file(file);
+                                    } else {
+                                        return {
+                                            error: true,
+                                            error_text: 'Заполните пустые поля'
+                                        };
+                                    }
+                                    break;
+                                }
+                                case 4: {
+                                    const content = formData.get('content');
+                                    if (!content) {
+                                        return {
+                                            error: true,
+                                            error_text: 'Заполните пустые поля'
+                                        };
+                                    }
+                                    data.content = [{ type: 'text', data: formData.get('content') }];
+                                    break;
+                                }
+                            }
+                            await Api.patch(`/exercises/${exerciseId}`, data);
+                            return redirect(`/dashboard/themes/${themeId}`);
                         },
                     },
                     {
-                        path: 'exercises/create',
+                        path: 'themes/:themeId/exercises/create',
                         Component: EditExercise,
                         loader: async () => {
                             return {
                                 exercise_types: await Api.get(`/exercises/types`)
                             };
                         },
-                        action: async ({ request }) => {
+                        action: async ({ request, params }) => {
+                            const themeId = params.themeId;
                             const formData = await request.formData();
-                            console.log(formData.get('name'));
-                            console.log(Number(formData.get('exercise_type')));
+                            const title = formData.get('name');
+                            const type_id = Number(formData.get('exercise_type'));
+                            if (!title || !type_id) {
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните пустые поля'
+                                };
+                            }
+                            const [exerciseId] = await Api.post(`/themes/${themeId}/exercises`, { title, type_id });
 
+                            async function error() {
+                                await Api.delete(`/exercises/${exerciseId}`);
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните пустые поля'
+                                };
+                            }
+
+                            let data = {};
+                            switch (type_id) {
+                                case 1: {
+                                    const success_answer = formData.get('success_answer');
+                                    if (!success_answer) {
+                                        return error();
+                                    }
+                                    data.success_answer = success_answer;
+                                    break;
+                                }
+                                case 2: {
+                                    const answers = formData.getAll('answers');
+                                    const success_answer = formData.get('success_answer');
+                                    if (!answers || !success_answer) {
+                                        return error();
+                                    }
+                                    await Api.patch(`/exercises/${exerciseId}`, { answers });
+                                    data.success_answer = success_answer;
+                                    break;
+                                }
+                                case 3: {
+                                    const file = formData.get('file');
+                                    if (file && file.size > 0 && file instanceof File) {
+                                        data.fileName = await Api.send_file(file);
+                                    } else {
+                                        return error();
+                                    }
+                                    break;
+                                }
+                                case 4: {
+                                    const content = formData.get('content');
+                                    if (!content) {
+                                        return error();
+                                    }
+                                    data.content = [{ type: 'text', data: formData.get('content') }];
+                                    break;
+                                }
+                            }
+                            await Api.patch(`/exercises/${exerciseId}`, data);
+                            return redirect(`/dashboard/themes/${themeId}`);
                         },
                     },
                 ],

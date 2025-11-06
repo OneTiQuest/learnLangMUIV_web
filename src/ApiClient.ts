@@ -33,6 +33,28 @@ export default class Api {
     return Api._send_request(url, { method: "DELETE" });
   }
 
+  static async send_file(file: File) {
+    return new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        try {
+          const result = await Api._send_request(`/files/`, {
+            method: "POST",
+            body: JSON.stringify({ file: reader.result })
+          });
+          res(result);
+        } catch (err) {
+          rej(err);
+        }
+      };
+    });
+  }
+
+  static async get_file(file_name: string) {
+    return Api._send_request(`/files/${file_name}`, { method: "GET" });
+  }
+
   static async _send_request(url: string, config: RequestInit): Promise<any> {
     const result = await fetch(`${Api.host}${url}`, {
       ...config,
