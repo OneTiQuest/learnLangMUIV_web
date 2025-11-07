@@ -13,6 +13,7 @@ import Users from './pages/dashboard/Users';
 import Themes from './pages/dashboard/Themes';
 import Cources from './pages/dashboard/Courses';
 import Langs from './pages/dashboard/Langs';
+import Grades from './pages/dashboard/Grades';
 import Theme from './pages/dashboard/Theme';
 import EditExercise from './pages/dashboard/edit/EditExercise';
 import EditModule from './pages/dashboard/edit/EditModule';
@@ -484,6 +485,17 @@ const router = createBrowserRouter([
                             await Api.patch(`/exercises/${exerciseId}`, data);
                             return redirect(`/dashboard/themes/${themeId}`);
                         },
+                    },
+                    {
+                        path: 'grades',
+                        Component: Grades,
+                        loader: async ({ context }) => {
+                            const uid = context.get(userContext)?.uid;
+                            return {
+                                grades: await Api.get(`/users/${uid}/grades`),
+                                userData: context.get(userContext)
+                            };
+                        }
                     },
                 ],
             },

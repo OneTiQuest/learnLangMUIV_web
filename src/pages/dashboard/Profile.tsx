@@ -2,9 +2,6 @@ import { useLoaderData } from "react-router";
 
 function Profile() {
     const { profile } = useLoaderData();
-    console.log(profile);
-
-
     return (
         <div>
             <h3 className="text-muiv text-3xl font-medium">Профиль</h3>
