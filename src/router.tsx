@@ -11,6 +11,8 @@ import Profile from './pages/dashboard/Profile';
 import Modules from './pages/dashboard/Modules';
 import Users from './pages/dashboard/Users';
 import Themes from './pages/dashboard/Themes';
+import Cources from './pages/dashboard/Courses';
+import Langs from './pages/dashboard/Langs';
 import Theme from './pages/dashboard/Theme';
 import EditExercise from './pages/dashboard/edit/EditExercise';
 import EditModule from './pages/dashboard/edit/EditModule';
@@ -37,6 +39,59 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         Component: Main,
+                    },
+                    {
+                        path: 'cources',
+                        Component: Cources,
+                        loader: async () => {
+                            return { courses: await Api.get('/courses/') };
+                        },
+                        action: async ({ request }) => {
+                            const form = await request.formData();
+                            const courceId = form.get("deleteCourse");
+                            const addName = form.get("addName");
+                            if (!courceId && !addName) {
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните поле'
+                                };
+                            }
+                            if (courceId) {
+                                await Api.delete(`/courses/${courceId}`);
+                                return;
+                            }
+                            if (addName) {
+                                await Api.post(`/courses/`, { name: addName });
+                                return;
+                            }
+                        }
+                    },
+                    {
+                        path: 'langs',
+                        Component: Langs,
+                        loader: async () => {
+                            return { langs: await Api.get('/langs/') };
+                        },
+                        action: async ({ request }) => {
+                            const form = await request.formData();
+                            const langId = form.get("deleteLang");
+                            const addName = form.get("addName");
+                            if (!langId && !addName) {
+                                return {
+                                    error: true,
+                                    error_text: 'Заполните поле'
+                                };
+                            }
+                            if (langId) {
+                                await Api.delete(`/langs/${langId}`);
+                                return;
+                            }
+                            if (addName) {
+                                await Api.post(`/langs/`, { name: addName });
+                                return;
+                            }
+
+                        }
                     },
                     {
                         path: 'users',
