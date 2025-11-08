@@ -21,41 +21,46 @@ function Themes() {
             <div className="mt-8">
                 <div className="flex flex-col mt-6">
                     <div className="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                        <div className="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-                            <table className="min-w-full">
-                                <thead>
-                                    <tr>
-                                        <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Имя</th>
-                                        {!userData.isStudent && (
-                                            <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Действия</th>
-                                        )}
-                                    </tr>
-                                </thead>
 
-                                <tbody className="bg-white">
-                                    {Object.entries(themes).map((theme) => (
-                                        <tr key={theme[1][0]}>
-                                            <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                <NavLink to={`/dashboard/themes/${theme[1][0]}`} className="text-sm leading-5 text-gray-900">
-                                                    {theme[1][1]}
-                                                </NavLink>
-                                            </td>
-
+                        {!Object.entries(themes).length ? (
+                            <p className="text-muiv text-2xl font-medium">В модуле еще тем</p>
+                        ) : (
+                            <div className="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
+                                <table className="min-w-full">
+                                    <thead>
+                                        <tr>
+                                            <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Имя</th>
                                             {!userData.isStudent && (
-                                                <td className="px-6 py-4 whitespace-no-wrap text-left border-b border-gray-200 text-sm leading-5 font-medium" >
-                                                    <NavLink to={`/dashboard/themes/${theme[1][0]}/edit`} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 ml-6 cursor-pointer">
-                                                        Редактировать
-                                                    </NavLink>
-                                                    <span onClick={deleteHandler.bind(null, theme[1][0])} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 ml-6 cursor-pointer">
-                                                        Удалить
-                                                    </span>
-                                                </td>
+                                                <th className="px-6 py-3 border-b border-gray-200 bg-muiv text-left text-xs leading-4 font-medium text-white uppercase tracking-wider">Действия</th>
                                             )}
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+
+                                    <tbody className="bg-white">
+                                        {Object.entries(themes).map((theme) => (
+                                            <tr key={theme[1][0]}>
+                                                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                    <NavLink to={`/dashboard/themes/${theme[1][0]}`} className="text-sm leading-5 text-gray-900">
+                                                        {theme[1][1]}
+                                                    </NavLink>
+                                                </td>
+
+                                                {!userData.isStudent && (
+                                                    <td className="px-6 py-4 whitespace-no-wrap text-left border-b border-gray-200 text-sm leading-5 font-medium" >
+                                                        <NavLink to={`/dashboard/themes/${theme[1][0]}/edit`} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 ml-6 cursor-pointer">
+                                                            Редактировать
+                                                        </NavLink>
+                                                        <span onClick={deleteHandler.bind(null, theme[1][0])} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 ml-6 cursor-pointer">
+                                                            Удалить
+                                                        </span>
+                                                    </td>
+                                                )}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div >

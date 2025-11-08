@@ -32,7 +32,7 @@ function Profile() {
                             <td className="py-4 px-6 border-b text-gray-500">{profile[8]}</td>
                         </tr>
                         <tr className="hover:bg-gray-200">
-                            <td className="py-4 px-6 border-b text-gray-700 text-lg">Закрепленные направление полготовки</td>
+                            <td className="py-4 px-6 border-b text-gray-700 text-lg">Закрепленные направления полготовки</td>
                             <td className="py-4 px-6 border-b text-gray-500">{profile[10]?.map((course) => course.name)?.join(', ')}</td>
                         </tr>
                         <tr className="hover:bg-gray-200">

@@ -12,7 +12,12 @@ function Langs() {
         await submit({ addName: input?.value }, { method: 'post' });
         input.value = '';
     }, [submit]);
-    const deleteHandler = useCallback((langId) => submit({ deleteLang: langId }, { method: 'post' }), [submit]);
+    const deleteHandler = useCallback((langId) => {
+        if (langs?.length && (langs?.length < 2)) {
+            return;
+        }
+        submit({ deleteLang: langId }, { method: 'post' });
+    }, [submit]);
 
     return (
         <div>

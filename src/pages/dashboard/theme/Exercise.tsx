@@ -35,16 +35,27 @@ function Content({ type, data, onAnswerChange }) {
             );
         }
         case 3: {
-            return <div></div>;
+            return (
+                <div>
+                    <audio controls src={`/api/files/${data.fileName}`}></audio>
+                </div>
+            );
         }
         case 4: {
             const contentArr: any = data.content;
-
             if (contentArr) {
                 return contentArr.reduce((prev: string, cur: any) => {
                     return prev += cur.data;
                 }, '');
             }
+            break;
+        }
+        case 5: {
+            return (
+                <div className="w-96 max-h-96 overflow-hidden flex items-center">
+                    <img className="w-full h-full" src={`/api/files/${data.fileName}`} />
+                </div>
+            );
         }
     }
     return JSON.stringify(data);

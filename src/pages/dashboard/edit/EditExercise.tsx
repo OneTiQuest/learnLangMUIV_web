@@ -6,7 +6,8 @@ enum EExerciseTypes {
     MissingWord = 1,
     SuccessAnswer = 2,
     Audio = 3,
-    Theory = 4
+    Theory = 4,
+    Picture = 5
 }
 
 function EditContent({ exerciseType = 1, data }) {
@@ -58,6 +59,7 @@ function EditContent({ exerciseType = 1, data }) {
                 </div>
             );
         }
+        case EExerciseTypes.Picture:
         case EExerciseTypes.Audio: {
             const deleteFile = () => {
                 setExData({ fileName: null });

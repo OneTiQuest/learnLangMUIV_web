@@ -4,6 +4,7 @@ services:
     # Сервис "балансировщика", reverse proxy
     web-server:
         image: nginx
+        restart: "always"
         env_file:
             - .env
         volumes:

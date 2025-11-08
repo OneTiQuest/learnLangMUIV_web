@@ -33,13 +33,17 @@ const router = createBrowserRouter([
         middleware: [dashboardMiddleware],
         children: [
             {
+                index: true,
+                middleware: [() => { throw redirect('/dashboard'); }]
+            },
+            {
                 path: 'dashboard',
                 Component: Dashboard,
                 loader: async ({ context }) => ({ userData: context.get(userContext) }),
                 children: [
                     {
                         index: true,
-                        Component: Main,
+                        Component: Main
                     },
                     {
                         path: 'cources',
@@ -293,6 +297,7 @@ const router = createBrowserRouter([
                             return {
                                 id: themeId,
                                 userData: context.get(userContext),
+                                answers: await Api.get(`/users/${uid}/themes/${themeId}/answers`),
                                 exercises: await Api.get(`/themes/${themeId}/exercises`),
                                 grade: await Api.get(`/users/${uid}/themes/${themeId}/grades`)
                             };
@@ -387,6 +392,7 @@ const router = createBrowserRouter([
                                     data.success_answer = success_answer;
                                     break;
                                 }
+                                case 5:
                                 case 3: {
                                     const file = formData.get('file');
                                     if (file && file.size > 0 && file instanceof File) {
@@ -464,6 +470,7 @@ const router = createBrowserRouter([
                                     data.success_answer = success_answer;
                                     break;
                                 }
+                                case 5:
                                 case 3: {
                                     const file = formData.get('file');
                                     if (file && file.size > 0 && file instanceof File) {

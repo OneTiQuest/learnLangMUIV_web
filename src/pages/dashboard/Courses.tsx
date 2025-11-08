@@ -12,7 +12,12 @@ function Courses() {
         await submit({ addName: input?.value }, { method: 'post' });
         input.value = '';
     }, [submit]);
-    const deleteHandler = useCallback((courceId) => submit({ deleteCourse: courceId }, { method: 'post' }), [submit]);
+    const deleteHandler = useCallback((courceId) => {
+        if (courses?.length && (courses?.length < 2)) {
+            return;
+        }
+        submit({ deleteCourse: courceId }, { method: 'post' });
+    }, [submit]);
 
     return (
         <div>
